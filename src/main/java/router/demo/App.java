@@ -7,6 +7,7 @@ import com.graphhopper.routing.util.*;
 import com.graphhopper.util.*;
 import com.graphhopper.reader.osm.GraphHopperOSM;
 import com.graphhopper.util.*;
+import com.graphhopper.util.shapes.GHPoint;
 
 import java.util.List; 
 import java.util.Map;
@@ -33,20 +34,23 @@ public class App {
 
         // Configuring route
         // simple configuration of the request object, see the GraphHopperServlet classes for more possibilities.
-        GHRequest req = new GHRequest(48.4084, -4.4982, 48.3748, -4.5976).
+        GHRequest req = new GHRequest().
         setVehicle("foot").
-        setAlgorithm(Parameters.Algorithms.ALT_ROUTE);
-        req.getHints().put(Parameters.Algorithms.AltRoute.MAX_PATHS, "5");
+        addPoint(new GHPoint(48.4085,-4.4984)).
+        setAlgorithm(Parameters.Algorithms.ROUND_TRIP);
+        req.getHints().put(Parameters.Algorithms.RoundTrip.DISTANCE,"20000");
         GHResponse rsp = hopper.route(req);
 
         // first check for errors
         if(rsp.hasErrors()) {
             // handle them!
-            // rsp.getErrors()
+            System.out.println(rsp.getErrors());
         }
 
-        PathWrapper path = rsp.getBest();
         List<PathWrapper> paths =rsp.getAll();
+
+
+        PathWrapper path = rsp.getBest();
         PointList pointList = path.getPoints();
         double distance = path.getDistance();
         long timeInMs = path.getTime();
@@ -60,10 +64,10 @@ public class App {
         System.out.println("==============================================================================");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String prettyJsonString = gson.toJson(iList);
-        //System.out.println(prettyJsonString);
+        System.out.println(path.getDistance());
         System.out.println("==============================================================================");
-        System.out.println(paths);
+        String itineraire =path.getPoints().toString().replace('(', '[').replace(')', ']');
         System.out.println("==============================================================================");
-        System.out.println(prettyJsonString);
+        System.out.println(itineraire);
     }
 }
