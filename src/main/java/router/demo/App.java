@@ -3,17 +3,41 @@
  */
 package router.demo;
 
-// GSON imports
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 // Spark imports
 import static spark.Spark.*;
 
+// Graphhopper imports
+import com.graphhopper.*;
+import com.graphhopper.reader.osm.GraphHopperOSM;
+import com.graphhopper.routing.util.EncodingManager;
+
+// JSON Imports
+import com.google.gson.JsonObject;
+
+
 public class App {
 
     public static void main(String[] args) {
+        // Loading Graphhopper
+        GraphHopper hopper = new GraphHopperOSM().forServer();
+        hopper.setDataReaderFile("src/main/resources/bretagne-latest.osm.pbf").setGraphHopperLocation("temp")
+                .setEncodingManager(new EncodingManager("foot")).setCHEnabled(false);
+
+        // Load OSM File
+        System.out.println("Loading OSM file ...");
+        hopper.importOrLoad();
+
         get("/",(req,res) -> "Welcome to HikeMap API");
-        get("/loop/:lat/:lon/:size", GraphHopperController.makeLoop);
+        get("/loop/:lat/:lon/:size", (req,res) -> {
+            Double lat = Double.parseDouble(req.params("lat"));
+            Double lon = Double.parseDouble(req.params("lon"));
+            String size = req.params("size");
+            JsonObject body = GraphHopperService.makeLoop(hopper,lat,lon,size);
+            res.header("Access-Control-Allow-Origin", "*");
+            res.type("application/json");
+            return body;
+        }
+        );
     }
 }
