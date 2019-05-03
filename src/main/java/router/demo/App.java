@@ -14,6 +14,9 @@ import com.graphhopper.routing.util.EncodingManager;
 
 // JSON Imports
 import com.google.gson.JsonObject;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 
 public class App {
@@ -22,10 +25,9 @@ public class App {
         // Loading Graphhopper
         GraphHopper hopper = new GraphHopperOSM().forServer();
         hopper.setDataReaderFile("src/main/resources/bretagne-latest.osm.pbf").setGraphHopperLocation("temp")
-                .setEncodingManager(new EncodingManager("foot")).setCHEnabled(false);
+                .setEncodingManager(new EncodingManager("hike")).setCHEnabled(false);
 
         // Load OSM File
-        System.out.println("Loading OSM file ...");
         hopper.importOrLoad();
 
         get("/",(req,res) -> "Welcome to HikeMap API");
@@ -33,11 +35,20 @@ public class App {
             Double lat = Double.parseDouble(req.params("lat"));
             Double lon = Double.parseDouble(req.params("lon"));
             String size = req.params("size");
-            JsonObject body = GraphHopperService.makeLoop(hopper,lat,lon,size);
+            JSONObject body = GraphHopperService.makeLoop(hopper,lat,lon,size);
             res.header("Access-Control-Allow-Origin", "*");
             res.type("application/json");
             return body;
-        }
-        );
+        });
+        get("/patrimonial/:lat/:lon/:size/:stops", (req,res) -> {
+            Double lat = Double.parseDouble(req.params("lat"));
+            Double lon = Double.parseDouble(req.params("lon"));
+            Integer stops = Integer.parseInt(req.params("stops"));
+            String size = req.params("size");
+            JSONObject body = GraphHopperService.makePatrimonial(hopper,lat,lon,size,stops);
+            res.header("Access-Control-Allow-Origin", "*");
+            res.type("application/json");
+            return body;
+        });
     }
 }
