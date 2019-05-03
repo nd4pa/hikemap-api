@@ -134,6 +134,20 @@ public class GraphHopperService {
 
         JSONObject body = new JSONObject("{ \"points\": ["+path.getPoints().toString().replace('(', '[').replace(')', ']')+"], \"time\": "+timeInMs+", \"distance\": "+distance+"}");
         body.put("success",success);
+        if(success){
+            JSONArray historic_points = new JSONArray();
+            JSONArray poi = json.getJSONArray("elements");
+            for(int i = 0; i < stops-1; i++){
+                Double latStop = Double.parseDouble(poi.getJSONObject(i).get("lat").toString());
+                Double lonStop = Double.parseDouble(poi.getJSONObject(i).get("lon").toString());
+                JSONObject point = new JSONObject();
+                point.put("lat", latStop);
+                point.put("lon", lonStop);
+                point.put("tags",poi.getJSONObject(i).get("tags"));
+                historic_points.put(point);
+            }
+            body.put("historic_points",historic_points);
+        }
         return body;
     };
 }
