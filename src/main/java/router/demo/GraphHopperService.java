@@ -98,6 +98,10 @@ public class GraphHopperService {
             ghreq = new GHRequest().setVehicle("hike");
             ghreq.addPoint(new GHPoint(lat,lon));
             JSONArray poi = json.getJSONArray("elements");
+
+            if(stops > json.getJSONArray("elements").length()){
+                stops=json.getJSONArray("elements").length();
+            }
     
             for(int i = 0; i < stops-1; i++){
                 Double latStop = Double.parseDouble(poi.getJSONObject(i).get("lat").toString());
