@@ -1,4 +1,4 @@
-package router.demo;
+package router;
 
 import com.graphhopper.*;
 import com.graphhopper.util.*;
@@ -22,9 +22,9 @@ import org.json.JSONArray;
 
 public class GraphHopperService {
 
-    public static JSONObject makeLoop(GraphHopper hopper, Double lat,Double lon, String size) {
+    public static JSONObject makeLoop(GraphHopper hopper, Double lat,Double lon, String size, String vehicle) {
         
-        GHRequest ghreq = new GHRequest().setVehicle("hike").addPoint(new GHPoint(lat, lon))
+        GHRequest ghreq = new GHRequest().setVehicle(vehicle).addPoint(new GHPoint(lat, lon))
                 .setAlgorithm(Parameters.Algorithms.ROUND_TRIP);
         ghreq.getHints().put(Parameters.Algorithms.RoundTrip.DISTANCE,size);
         GHResponse rsp = hopper.route(ghreq);
@@ -56,7 +56,7 @@ public class GraphHopperService {
         return body;
     };
     
-    public static JSONObject makePatrimonial(GraphHopper hopper, Double lat,Double lon, String size, Integer stops) {
+    public static JSONObject makePatrimonial(GraphHopper hopper, Double lat,Double lon, String size, Integer stops, String vehicle) {
         InputStream is =null;
         JSONObject json = null;
         String url = new String("https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%28node%5B%22historic%22%5D%28around%3A"+size+","+lat.toString()+","+lon.toString()+"%29%3B%29%3Bout%3B%3E%3Bout%20skel%20qt%3B%0A");
@@ -89,7 +89,7 @@ public class GraphHopperService {
 
         Boolean success = false;
        
-        GHRequest ghreq = new GHRequest().setVehicle("hike").addPoint(new GHPoint(lat, lon))
+        GHRequest ghreq = new GHRequest().setVehicle(vehicle).addPoint(new GHPoint(lat, lon))
             .setAlgorithm(Parameters.Algorithms.ROUND_TRIP);
             ghreq.getHints().put(Parameters.Algorithms.RoundTrip.DISTANCE,size);
 
