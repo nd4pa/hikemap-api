@@ -24,7 +24,7 @@ public class App {
     public static void main(String[] args) {
         // Loading Graphhopper
         GraphHopper hopper = new GraphHopperOSM().forServer();
-        hopper.setDataReaderFile(args[0]).setGraphHopperLocation(args[1])
+        hopper.setDataReaderFile("osm/france.osm.pbf").setGraphHopperLocation("temp")
                 .setEncodingManager(new EncodingManager("hike,car,bike")).setCHEnabled(false);
 
         // Load OSM File

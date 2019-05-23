@@ -7,3 +7,5 @@ bin/*
 
 temp/*
 src/main/resources/*
+
+osm/*

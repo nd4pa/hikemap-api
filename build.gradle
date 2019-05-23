@@ -13,7 +13,7 @@ plugins {
 
     // Apply the application plugin to add support for building an application
     id 'application'
-    
+    id "de.undercouch.download" version "3.4.3"
 }
 
 
@@ -35,6 +35,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+
 task unzip(type: Copy) {
     def zipFile = file("build/distributions/hikemap.zip")
     def outputDir = file("build/distributions")
@@ -42,7 +43,14 @@ task unzip(type: Copy) {
     into outputDir
 }
 
+task updatePBF(type: Download) {
+    src 'https://www.data.gouv.fr/fr/datasets/r/01fdab09-ed86-4259-b863-69913a3e04d1'
+    dest 'osm/france.osm.pbf'
+    onlyIfModified true
+}
+
 build.finalizedBy(unzip)
+build.dependsOn(updatePBF)
 
 // Define the main class for the application
 mainClassName = 'hikemap.App'
