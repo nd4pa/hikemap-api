@@ -1,4 +1,4 @@
-package router;
+package hikemap;
 
 import com.graphhopper.*;
 import com.graphhopper.util.*;

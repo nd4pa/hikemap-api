@@ -6,6 +6,7 @@
  * user guide available at https://docs.gradle.org/5.0/userguide/tutorial_java_projects.html
  */
 
+
 plugins {
     // Apply the java plugin to add support for Java
     id 'java'
@@ -14,6 +15,8 @@ plugins {
     id 'application'
     
 }
+
+
 
 repositories {
     // Use jcenter for resolving your dependencies.
@@ -32,5 +35,14 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+task unzip(type: Copy) {
+    def zipFile = file("build/distributions/hikemap.zip")
+    def outputDir = file("build/distributions")
+    from zipTree(zipFile)
+    into outputDir
+}
+
+build.finalizedBy(unzip)
+
 // Define the main class for the application
-mainClassName = 'router.App'
+mainClassName = 'hikemap.App'
