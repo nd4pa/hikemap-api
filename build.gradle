@@ -44,8 +44,8 @@ task unzip(type: Copy) {
 }
 
 task updatePBF(type: Download) {
-    src 'https://www.data.gouv.fr/fr/datasets/r/01fdab09-ed86-4259-b863-69913a3e04d1'
-    dest 'osm/france.osm.pbf'
+    src 'https://download.geofabrik.de/europe/france/bretagne-latest.osm.pbf'
+    dest 'osm/data.osm.pbf'
     onlyIfModified true
 }
 
