@@ -24,7 +24,7 @@ public class App {
 
     public static void main(String[] args) {
         // Loading Graphhopper
-        GraphHopper hopper = new GraphHopper().forServer();
+        GraphHopper hopper = new GraphHopperOSM().forServer();
         List<String> weightings = new ArrayList<String>();
         weightings.add(new String("fastest"));
         hopper.setDataReaderFile(args[0]).setGraphHopperLocation(args[1])
