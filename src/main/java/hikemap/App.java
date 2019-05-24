@@ -7,11 +7,12 @@ package hikemap;
 // Spark imports
 import static spark.Spark.*;
 
+import java.util.*;
 // Graphhopper imports
 import com.graphhopper.*;
 import com.graphhopper.reader.osm.GraphHopperOSM;
 import com.graphhopper.routing.util.EncodingManager;
-
+import com.graphhopper.routing.weighting.Weighting;
 // JSON Imports
 import com.google.gson.JsonObject;
 import org.json.JSONException;
@@ -23,10 +24,14 @@ public class App {
 
     public static void main(String[] args) {
         // Loading Graphhopper
-        GraphHopper hopper = new GraphHopperOSM().forServer();
-        hopper.setDataReaderFile("osm/france.osm.pbf").setGraphHopperLocation("temp")
-                .setEncodingManager(new EncodingManager("hike,car,bike")).setCHEnabled(false);
-
+        GraphHopper hopper = new GraphHopper().forServer();
+        List<String> weightings = new ArrayList<String>();
+        weightings.add(new String("fastest"));
+        hopper.setDataReaderFile(args[0]).setGraphHopperLocation(args[1])
+                .setEncodingManager(new EncodingManager("hike,car,bike"));
+        hopper.setMaxVisitedNodes(100000);
+        hopper.setCHEnabled(false);
+        hopper.getLMFactoryDecorator().setWeightingsAsStrings(weightings);
         // Load OSM File
         hopper.importOrLoad();
 
@@ -48,6 +53,17 @@ public class App {
             String size = req.params("size");
             String vehicle = req.params("vehicle");
             JSONObject body = GraphHopperService.makePatrimonial(hopper,lat,lon,size,stops,vehicle);
+            res.header("Access-Control-Allow-Origin", "*");
+            res.type("application/json");
+            return body;
+        });
+        get("/test/:lat/:lon/:latstop/:lonstop/:vehicle", (req,res) -> {
+            Double lat = Double.parseDouble(req.params("lat"));
+            Double lon = Double.parseDouble(req.params("lon"));
+            Double latstop = Double.parseDouble(req.params("latstop"));
+            Double lonstop = Double.parseDouble(req.params("lonstop"));
+            String vehicle = req.params("vehicle");
+            JSONObject body = GraphHopperService.makeTest(hopper,lat,lon,latstop,lonstop,vehicle);
             res.header("Access-Control-Allow-Origin", "*");
             res.type("application/json");
             return body;

@@ -5,6 +5,7 @@
 build
 bin/*
 
+graph/*
 temp/*
 src/main/resources/*
 

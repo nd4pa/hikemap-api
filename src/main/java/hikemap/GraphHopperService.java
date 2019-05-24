@@ -5,11 +5,13 @@ import com.graphhopper.util.*;
 import com.graphhopper.util.shapes.GHPoint;
 import com.graphhopper.GraphHopper;
 
+import java.util.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -27,6 +29,8 @@ public class GraphHopperService {
         GHRequest ghreq = new GHRequest().setVehicle(vehicle).addPoint(new GHPoint(lat, lon))
                 .setAlgorithm(Parameters.Algorithms.ROUND_TRIP);
         ghreq.getHints().put(Parameters.Algorithms.RoundTrip.DISTANCE,size);
+
+        
         GHResponse rsp = hopper.route(ghreq);
 
         // first check for errors
@@ -34,9 +38,6 @@ public class GraphHopperService {
             // handle them!
             System.out.println(rsp.getErrors());
         }
-
-        //List<PathWrapper> paths = rsp.getAll();
-
         PathWrapper path = rsp.getBest();
         PointList pointList = path.getPoints();
         double distance = path.getDistance();
@@ -44,15 +45,7 @@ public class GraphHopperService {
 
         InstructionList il = path.getInstructions();
 
-        // or get the json
-        
-
-        //System.out.println(il.toString().replace('(', '[').replace(')', ']'));
-        //System.out.println("==============================================================================");
-        //Gson gson = new GsonBuilder().create();
-
         JSONObject body = new JSONObject("{ \"points\": ["+path.getPoints().toString().replace('(', '[').replace(')', ']')+"], \"time\": "+timeInMs+", \"distance\": "+distance+"}");
-    
         return body;
     };
     
@@ -90,9 +83,9 @@ public class GraphHopperService {
         Boolean success = false;
        
         GHRequest ghreq = new GHRequest().setVehicle(vehicle).addPoint(new GHPoint(lat, lon))
-            .setAlgorithm(Parameters.Algorithms.ROUND_TRIP);
-            ghreq.getHints().put(Parameters.Algorithms.RoundTrip.DISTANCE,size);
+            .setAlgorithm(Parameters.Algorithms.ASTAR_BI);
 
+       
         if(json.getJSONArray("elements").length() != new Integer(0)) {
             
             ghreq = new GHRequest().setVehicle("hike");
@@ -120,22 +113,12 @@ public class GraphHopperService {
             System.out.println(rsp.getErrors());
         }
 
-        //List<PathWrapper> paths = rsp.getAll();
-
         PathWrapper path = rsp.getBest();
         PointList pointList = path.getPoints();
         double distance = path.getDistance();
         long timeInMs = path.getTime();
 
         InstructionList il = path.getInstructions();
-
-        // or get the json
-        
-
-        //System.out.println(il.toString().replace('(', '[').replace(')', ']'));
-        //System.out.println("==============================================================================");
-        //Gson gson = new GsonBuilder().create();
-
         JSONObject body = new JSONObject("{ \"points\": ["+path.getPoints().toString().replace('(', '[').replace(')', ']')+"], \"time\": "+timeInMs+", \"distance\": "+distance+"}");
         body.put("success",success);
         if(success){
@@ -152,6 +135,47 @@ public class GraphHopperService {
             }
             body.put("historic_points",historic_points);
         }
+        
+        return body;
+    };
+    public static JSONObject makeTest(GraphHopper hopper, Double lat,Double lon, Double latstop, Double lonstop, String vehicle) {
+
+        GHRequest ghreq = new GHRequest().setVehicle(vehicle).addPoint(new GHPoint(lat, lon))
+            .setAlgorithm(Parameters.Algorithms.ALT_ROUTE);
+            ghreq.getHints().put(Parameters.Algorithms.AltRoute.MAX_PATHS, new String("10000"));
+            ghreq.getHints().put(Parameters.Algorithms.AltRoute.MAX_SHARE,new String("1"));
+            ghreq.getHints().put(Parameters.Algorithms.AltRoute.MAX_WEIGHT,new String("100"));
+            ghreq.addPoint(new GHPoint(latstop,lonstop));
+       
+        GHResponse rsp = hopper.route(ghreq);
+        
+
+        // first check for errors
+        if (rsp.hasErrors()) {
+            // handle them!
+            System.out.println(rsp.getErrors());
+        }
+
+        PathWrapper path = rsp.getBest();
+        PointList pointList = path.getPoints();
+        double distance = path.getDistance();
+        long timeInMs = path.getTime();
+
+        InstructionList il = path.getInstructions();
+
+        JSONObject body = new JSONObject("{}");
+        
+        List<PathWrapper> paths = rsp.getAll();
+        PathWrapper pathtemp;
+        JSONObject pathtempjson;
+        JSONArray itineraries = new JSONArray();
+        for (int i = 0; i < paths.size(); i++) {
+            pathtemp = paths.get(i);
+            pathtempjson = new JSONObject("{ \"points\": ["+pathtemp.getPoints().toString().replace('(', '[').replace(')', ']')+"], \"time\": "+pathtemp.getTime()+", \"distance\": "+pathtemp.getDistance()+"}");
+            itineraries.put(pathtempjson);
+        }
+        body.put("itineraries",itineraries);
+        body.put("itineraries_number",paths.size());
         return body;
     };
 }

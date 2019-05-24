@@ -49,8 +49,13 @@ task updatePBF(type: Download) {
     onlyIfModified true
 }
 
+task cleanGraph(type: Delete){
+    delete 'graph'
+}
+
 build.finalizedBy(unzip)
 build.dependsOn(updatePBF)
+clean.dependsOn(cleanGraph)
 
 // Define the main class for the application
 mainClassName = 'hikemap.App'
