@@ -172,6 +172,8 @@ public class GraphHopperService {
         for (int i = 0; i < paths.size(); i++) {
             pathtemp = paths.get(i);
             pathtempjson = new JSONObject("{ \"points\": ["+pathtemp.getPoints().toString().replace('(', '[').replace(')', ']')+"], \"time\": "+pathtemp.getTime()+", \"distance\": "+pathtemp.getDistance()+"}");
+            pathtempjson.put("distance",pathtemp.getDistance());
+            pathtempjson.put("time",pathtemp.getTime());
             itineraries.put(pathtempjson);
         }
         body.put("itineraries",itineraries);
