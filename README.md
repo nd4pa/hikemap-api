@@ -101,7 +101,7 @@ Exécutez :
 ```bash
 systemctl daemon-reload
 systemctl start hikemap-api.service
-systemctl enable hikemap.service
+systemctl enable hikemap-api.service
 systemctl restart caddy
 ```
 Configuration de développement
