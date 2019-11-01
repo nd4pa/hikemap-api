@@ -28,7 +28,7 @@ dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     implementation 'com.graphhopper:graphhopper-reader-osm:0.11.0'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'org.slf4j:slf4j-simple:1.7.21'
+    implementation 'org.slf4j:slf4j-simple:1.7.29'
     implementation 'org.json:json:20180813'
     compile "com.sparkjava:spark-core:2.7.2"
     // Use JUnit test framework
