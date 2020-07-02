@@ -30,7 +30,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'org.slf4j:slf4j-simple:1.7.21'
     implementation 'org.json:json:20180813'
-    compile "com.sparkjava:spark-core:2.7.2"
+    compile "com.sparkjava:spark-core:2.9.2"
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }
