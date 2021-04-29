@@ -1,0 +1,20 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.graphhopper:graphhopper-reader-osm
+    versions:
+    - "2.3"
+    - 3.0-pre1
+    - 3.0-pre2
+  - dependency-name: org.json:json
+    versions:
+    - "20201115"
+  - dependency-name: junit:junit
+    versions:
+    - 4.13.1
